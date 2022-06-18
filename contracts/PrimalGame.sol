@@ -87,6 +87,14 @@ contract PrimalGame is Ownable, ERC721A, ReentrancyGuard {
     // metadata URI
     string private _baseTokenURI;
 
+    // user can mint NFT mystery box during _timeStartMintMystery and _timeUncoverNFT
+
+    // when to mint NFT mystery box
+    uint public timeStartMintMystery;
+
+    // until when then NFT mystery box is uncovered automatically.
+    uint public timeUncoverNFT;
+
     function _baseURI() internal view virtual override returns (string memory) {
         return _baseTokenURI;
     }
