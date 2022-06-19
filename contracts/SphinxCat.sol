@@ -73,12 +73,12 @@ library MerkleProof {
     }
 }
 
-contract PrimalGame is Ownable, ERC721A, ReentrancyGuard {
+contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
     constructor(
         uint256 timeStartMintMystery_,
         uint256 timeUncoverNFT_,
         bytes32 merkleRoot_
-    ) ERC721A("PrimalGame", "PGCN", 2, 2000) {
+    ) ERC721A("Sphinx Cat Magic Club", "SCMC", 2, 2000) {
         timeStartMintMystery = timeStartMintMystery_;
         timeUncoverNFT = timeUncoverNFT_;
         merkleRoot = merkleRoot_;
@@ -170,7 +170,7 @@ contract PrimalGame is Ownable, ERC721A, ReentrancyGuard {
     uint256 public allowListMintAmount = 1000;
     uint256 public immutable maxPerAddressDuringMint = 2;
 
-    bytes32 private merkleRoot;
+    bytes32 public merkleRoot;
 
     mapping(address => bool) public allowListAppeared;
     mapping(address => uint256) public allowListStock;
