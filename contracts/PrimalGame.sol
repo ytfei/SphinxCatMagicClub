@@ -41,7 +41,11 @@ library MerkleProof {
      *
      * _Available since v4.4._
      */
-    function processProof(bytes32[] memory proof, bytes32 leaf) internal pure returns (bytes32) {
+    function processProof(bytes32[] memory proof, bytes32 leaf)
+        internal
+        pure
+        returns (bytes32)
+    {
         bytes32 computedHash = leaf;
         for (uint256 i = 0; i < proof.length; i++) {
             bytes32 proofElement = proof[i];
@@ -56,7 +60,11 @@ library MerkleProof {
         return computedHash;
     }
 
-    function _efficientHash(bytes32 a, bytes32 b) private pure returns (bytes32 value) {
+    function _efficientHash(bytes32 a, bytes32 b)
+        private
+        pure
+        returns (bytes32 value)
+    {
         assembly {
             mstore(0x00, a)
             mstore(0x20, b)
@@ -67,7 +75,14 @@ library MerkleProof {
 
 contract PrimalGame is Ownable, ERC721A, ReentrancyGuard {
     constructor(
-    ) ERC721A("PrimalGame", "PGCN", 2, 2000) {}
+        uint256 timeStartMintMystery_,
+        uint256 timeUncoverNFT_,
+        bytes32 merkleRoot_
+    ) ERC721A("PrimalGame", "PGCN", 2, 2000) {
+        timeStartMintMystery = timeStartMintMystery_;
+        timeUncoverNFT = timeUncoverNFT_;
+        merkleRoot = merkleRoot_;
+    }
 
     // For marketing etc.
     function reserveMint(uint256 quantity, address to) external onlyOwner {
@@ -79,7 +94,7 @@ contract PrimalGame is Ownable, ERC721A, ReentrancyGuard {
         for (uint256 i = 0; i < numChunks; i++) {
             _safeMint(to, maxBatchSize);
         }
-        if (quantity % maxBatchSize != 0){
+        if (quantity % maxBatchSize != 0) {
             _safeMint(to, quantity % maxBatchSize);
         }
     }
@@ -87,20 +102,33 @@ contract PrimalGame is Ownable, ERC721A, ReentrancyGuard {
     // metadata URI
     string private _baseTokenURI;
 
+    string private _baseTokenURIMystrey = "ipfs://";
+    string private _baseTokenURIReal = "ipfs://";
+
     // user can mint NFT mystery box during _timeStartMintMystery and _timeUncoverNFT
 
     // when to mint NFT mystery box
-    uint public timeStartMintMystery;
+    uint256 public timeStartMintMystery;
 
     // until when then NFT mystery box is uncovered automatically.
-    uint public timeUncoverNFT;
+    uint256 public timeUncoverNFT;
 
     function _baseURI() internal view virtual override returns (string memory) {
-        return _baseTokenURI;
+        if (block.timestamp < timeUncoverNFT) {
+            return _baseTokenURIMystrey;
+        } else {
+            return _baseTokenURIReal;
+        }
+
+        // return _baseTokenURI;
     }
 
-    function setBaseURI(string calldata baseURI) external onlyOwner {
-        _baseTokenURI = baseURI;
+    function setBaseURI(
+        string calldata baseURIMystrey_,
+        string calldata baseTokenURIReal_
+    ) external onlyOwner {
+        _baseTokenURIMystrey = baseURIMystrey_;
+        _baseTokenURIReal = baseTokenURIReal_;
     }
 
     function withdrawMoney() external onlyOwner nonReentrant {
@@ -108,7 +136,11 @@ contract PrimalGame is Ownable, ERC721A, ReentrancyGuard {
         require(success, "Transfer failed.");
     }
 
-    function setOwnersExplicit(uint256 quantity) external onlyOwner nonReentrant {
+    function setOwnersExplicit(uint256 quantity)
+        external
+        onlyOwner
+        nonReentrant
+    {
         _setOwnersExplicit(quantity);
     }
 
@@ -117,9 +149,9 @@ contract PrimalGame is Ownable, ERC721A, ReentrancyGuard {
     }
 
     function getOwnershipData(uint256 tokenId)
-    external
-    view
-    returns (TokenOwnership memory)
+        external
+        view
+        returns (TokenOwnership memory)
     {
         return ownershipOf(tokenId);
     }
@@ -130,6 +162,7 @@ contract PrimalGame is Ownable, ERC721A, ReentrancyGuard {
             payable(msg.sender).transfer(msg.value - price);
         }
     }
+
     // allowList mint
     uint256 public allowListMintPrice = 0.200000 ether;
     // default false
@@ -142,25 +175,36 @@ contract PrimalGame is Ownable, ERC721A, ReentrancyGuard {
     mapping(address => bool) public allowListAppeared;
     mapping(address => uint256) public allowListStock;
 
-    function allowListMint(uint256 quantity, bytes32[] memory proof) external payable {
+    function allowListMint(uint256 quantity, bytes32[] memory proof)
+        external
+        payable
+    {
         require(allowListStatus, "not begun");
-        require(totalSupply() + quantity <= collectionSize, "reached max supply");
+        require(
+            totalSupply() + quantity <= collectionSize,
+            "reached max supply"
+        );
         require(allowListMintAmount >= quantity, "reached max amount");
         bytes32 leaf = keccak256(abi.encodePacked(msg.sender));
-        require(MerkleProof.verify(proof, merkleRoot, leaf),
-        "Invalid Merkle Proof.");
-        if(!allowListAppeared[msg.sender]){
+        require(
+            MerkleProof.verify(proof, merkleRoot, leaf),
+            "Invalid Merkle Proof."
+        );
+        if (!allowListAppeared[msg.sender]) {
             allowListAppeared[msg.sender] = true;
             allowListStock[msg.sender] = maxPerAddressDuringMint;
         }
-        require(allowListStock[msg.sender] >= quantity, "reached allow list per address mint amount");
+        require(
+            allowListStock[msg.sender] >= quantity,
+            "reached allow list per address mint amount"
+        );
         allowListStock[msg.sender] -= quantity;
         _safeMint(msg.sender, quantity);
         allowListMintAmount -= quantity;
-        refundIfOver(allowListMintPrice*quantity);
+        refundIfOver(allowListMintPrice * quantity);
     }
 
-    function setRoot(bytes32 root) external onlyOwner{
+    function setRoot(bytes32 root) external onlyOwner {
         merkleRoot = root;
     }
 
@@ -176,23 +220,14 @@ contract PrimalGame is Ownable, ERC721A, ReentrancyGuard {
     uint256 public immutable publicSalePerMint = 2;
 
     function publicSaleMint(uint256 quantity) external payable {
+        require(publicSaleStatus, "not begun");
         require(
-        publicSaleStatus,
-        "not begun"
+            totalSupply() + quantity <= collectionSize,
+            "reached max supply"
         );
-        require(
-        totalSupply() + quantity <= collectionSize,
-        "reached max supply"
-        );
-        require(
-        amountForPublicSale >= quantity,
-        "reached max amount"
-        );
+        require(amountForPublicSale >= quantity, "reached max amount");
 
-        require(
-        quantity <= publicSalePerMint,
-        "reached max amount per mint"
-        );
+        require(quantity <= publicSalePerMint, "reached max amount per mint");
 
         _safeMint(msg.sender, quantity);
         amountForPublicSale -= quantity;
