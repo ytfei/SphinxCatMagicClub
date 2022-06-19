@@ -19,7 +19,9 @@ describe("PrimalGame", function () {
     const primal = await PrimalGame.deploy(BigNumber.from(TIME_START_MYSTREY), BigNumber.from(TIME_UNCOVER_MYSTREY), merkleTree.getRoot());
     await primal.deployed();
 
-    // expect(await greeter.greet()).to.equal("Hello, world!");
+    expect(await primal.timeStartMintMystery()).to.equal(TIME_START_MYSTREY);
+
+    expect(await primal.greet()).to.equal("Hello, world!");
 
     // const setGreetingTx = await greeter.setGreeting("Hola, mundo!");
 
