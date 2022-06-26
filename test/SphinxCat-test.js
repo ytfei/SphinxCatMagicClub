@@ -54,15 +54,6 @@ describe("SphinxCat", function () {
     const addr = await this.contract.ownerOf(BigNumber.from(0));
     assert.equal(addr, owner.address);
 
-    // assert.equal(await this.contract.tokenURI(1), baseURIMystrey + "1")
-
-    // expect(await primal.greet()).to.equal("Hello, world!");
-
-    // const setGreetingTx = await greeter.setGreeting("Hola, mundo!");
-
-    // // wait until the transaction is mined
-    // await setGreetingTx.wait();
-
-    // expect(await greeter.greet()).to.equal("Hola, mundo!");
+    assert.equal(await this.contract.tokenURI(0), baseURIMystrey + "0")
   });
 });
