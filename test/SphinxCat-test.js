@@ -15,6 +15,9 @@ describe("SphinxCat", function () {
 
     const SphinxCat = await ethers.getContractFactory("SphinxCat");
     const sphinxCat = await SphinxCat.deploy(BigNumber.from(TIME_START_MYSTREY), BigNumber.from(TIME_UNCOVER_MYSTREY), merkleTree.getRoot());
+
+    console.log(`HexRoot = ${merkleTree.getHexRoot()}`)
+
     await sphinxCat.deployed();
 
     this.contract = sphinxCat
@@ -42,7 +45,16 @@ describe("SphinxCat", function () {
     const mintTx = await this.contract.publicSaleMint(1, options);
     await mintTx.wait();
 
-    assert.equal(await this.contract.tokenURI(1), baseURIMystrey + "1")
+    const balance = await this.contract.balanceOf(owner.address);
+    assert.equal(balance.toNumber(), 1);
+
+    const totalSupply = await this.contract.totalSupply();
+    assert.equal(totalSupply.toNumber(), 1);
+
+    const addr = await this.contract.ownerOf(BigNumber.from(0));
+    assert.equal(addr, owner.address);
+
+    // assert.equal(await this.contract.tokenURI(1), baseURIMystrey + "1")
 
     // expect(await primal.greet()).to.equal("Hello, world!");
 

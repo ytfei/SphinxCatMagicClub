@@ -78,7 +78,7 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
         uint256 timeStartMintMystery_,
         uint256 timeUncoverNFT_,
         bytes32 merkleRoot_
-    ) ERC721A("Sphinx Cat Magic Club", "SCMC", 2, 2000) {
+    ) ERC721A("Sphinx Cat Magic Club", "SCMC", 1, 10000) {
         timeStartMintMystery = timeStartMintMystery_;
         timeUncoverNFT = timeUncoverNFT_;
         merkleRoot = merkleRoot_;

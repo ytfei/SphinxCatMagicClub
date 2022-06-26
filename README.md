@@ -70,3 +70,8 @@ function transferOwnership(address newOwner)
 
 
 ```
+
+# 联调
+
+合约部署网络：以太坊 Goerli 测试网
+合约部署地址：0x29370809CcDF34974a9a5E547F05F6cF0EE27B01

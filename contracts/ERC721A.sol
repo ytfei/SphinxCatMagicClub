@@ -98,6 +98,7 @@ contract ERC721A is
    * @dev See {IERC721Enumerable-tokenByIndex}.
    */
   function tokenByIndex(uint256 index) public view override returns (uint256) {
+    // TODO: 需要判断等于吗？
     require(index < totalSupply(), "global index out of bounds");
     return index;
   }
@@ -106,6 +107,7 @@ contract ERC721A is
    * @dev See {IERC721Enumerable-tokenOfOwnerByIndex}.
    * This read function is O(collectionSize). If calling from a separate contract, be sure to test gas first.
    * It may also degrade with extremely large collection sizes (e.g >> 10000), test for your use case.
+   * 查询用户的第 N 个 NFT
    */
   function tokenOfOwnerByIndex(address owner, uint256 index)
     public
