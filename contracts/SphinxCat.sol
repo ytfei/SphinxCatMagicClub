@@ -174,8 +174,6 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
     }
 
     // 白名单用户的铸造价格
-    uint256 public allowListMintPrice = 0.200000 ether;
-
     uint256 public allowListMintAmount = 3500;
     uint256 public immutable maxPerAddressDuringMint = 1;
     uint256 public immutable allowListPerMint = 1;
@@ -211,7 +209,6 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
         allowListStock[msg.sender] -= quantity;
         _safeMint(msg.sender, quantity);
         allowListMintAmount -= quantity;
-        // refundIfOver(allowListMintPrice * quantity);
     }
 
     function setRoot(bytes32 root) external onlyOwner {
