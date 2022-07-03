@@ -51,6 +51,13 @@ describe("SphinxCat", function () {
     const price = await this.contract.getCurrentPrice();
     assert.isTrue(price.mul(quantity).eq(await getContractBalance(this.contract)));
 
+    // 将账户的代币提现出来
+    const withdrawTx = await this.contract.withdrawMoney();
+    await withdrawTx.wait();
+    console.log("Contract balance after withdraw =", ethers.utils.formatEther(await getContractBalance(this.contract)));
+    console.log("Account balance after withdraw =", ethers.utils.formatEther(await owner.getBalance()));
+
+    // 判定：铸造的数量
     const totalSupply = await this.contract.totalSupply();
     assert.equal(totalSupply.toNumber(), quantity);
 

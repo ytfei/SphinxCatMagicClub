@@ -32,7 +32,7 @@ module.exports = {
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
 
-    polygontestnet: {
+    mumbai: {
       url: process.env.POLYGON_TEST_URL || "",
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],

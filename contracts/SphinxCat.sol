@@ -89,12 +89,17 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
         merkleRoot = merkleRoot_;
     }
 
+    // 团队保留的NFT（用于社区营销）
+    uint256 public reservedMintAmount = 500; // private
+
     // For marketing etc.
     function reserveMint(uint256 quantity, address to) external onlyOwner {
         require(
             totalSupply() + quantity <= collectionSize,
             "too many already minted before dev mint"
         );
+        require(reservedMintAmount >= quantity, "reached max amount");
+
         uint256 numChunks = quantity / maxBatchSize;
         for (uint256 i = 0; i < numChunks; i++) {
             _safeMint(to, maxBatchSize);
@@ -102,11 +107,11 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
         if (quantity % maxBatchSize != 0) {
             _safeMint(to, quantity % maxBatchSize);
         }
+
+        reservedMintAmount -= quantity;
     }
 
     // metadata URI
-    string private _baseTokenURI;
-
     string private _baseTokenURIMystrey =
         "ipfs://bafybeielxy5wach4socvkzplakik67dioiuzqc56qydupuqyzsw5gj5ukm/";
     string private _baseTokenURIReal =
@@ -207,17 +212,6 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
         _safeMint(msg.sender, quantity);
         allowListMintAmount -= quantity;
         // refundIfOver(allowListMintPrice * quantity);
-    }
-
-    // 团队保留的NFT（用于社区营销）
-    uint256 public reservedMintAmount = 500;
-
-    // 管理员为指定用户铸造NFT
-    function mintTo(address to, uint256 quantity) external onlyOwner {
-        require(reservedMintAmount >= quantity, "reached max amount");
-
-        _safeMint(to, quantity);
-        reservedMintAmount -= quantity;
     }
 
     function setRoot(bytes32 root) external onlyOwner {
