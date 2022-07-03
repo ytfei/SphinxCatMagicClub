@@ -107,8 +107,10 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
     // metadata URI
     string private _baseTokenURI;
 
-    string private _baseTokenURIMystrey = "ipfs://";
-    string private _baseTokenURIReal = "ipfs://";
+    string private _baseTokenURIMystrey =
+        "ipfs://bafybeielxy5wach4socvkzplakik67dioiuzqc56qydupuqyzsw5gj5ukm/";
+    string private _baseTokenURIReal =
+        "ipfs://bafybeielxy5wach4socvkzplakik67dioiuzqc56qydupuqyzsw5gj5ukm/";
 
     // user can mint NFT mystery box during _timeStartMintMystery and _timeUncoverNFT
 
@@ -166,10 +168,9 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
         }
     }
 
-    // allowList mint
+    // 白名单用户的铸造价格
     uint256 public allowListMintPrice = 0.200000 ether;
-    // default false
-    bool public allowListStatus = false;
+
     uint256 public allowListMintAmount = 3500;
     uint256 public immutable maxPerAddressDuringMint = 1;
     uint256 public immutable allowListPerMint = 1;
@@ -181,7 +182,7 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
 
     // payable 白名单用户铸造不需要付费（线下交易过了）只需要出Gas就行
     function allowListMint(uint256 quantity, bytes32[] memory proof) external {
-        require(allowListStatus, "not begun");
+        require(isMintable(), "not mintable");
         require(quantity <= allowListPerMint, "reached max amount per mint");
 
         require(
@@ -223,13 +224,12 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
         merkleRoot = root;
     }
 
-    function setAllowListStatus(bool status) external onlyOwner {
-        allowListStatus = status;
+    // 只有区块时间在指定的时间范围内，才可以铸造
+    function isMintable() private view returns (bool) {
+        return
+            block.timestamp >= timeStartMintMystery &&
+            block.timestamp <= timeUncoverNFT;
     }
-
-    //public sale
-    bool public publicSaleStatus = false;
-    uint256 public publicPrice = 0.200000 ether;
 
     uint256 public amountForPublicSale = 6000;
 
@@ -237,7 +237,7 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
     uint256 public immutable publicSalePerMint = 1;
 
     function publicSaleMint(uint256 quantity) external payable {
-        require(publicSaleStatus, "not begun");
+        require(isMintable(), "not mintable");
         require(
             totalSupply() + quantity <= collectionSize,
             "reached max supply"
@@ -248,18 +248,16 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
 
         _safeMint(msg.sender, quantity);
         amountForPublicSale -= quantity;
-        refundIfOver(uint256(publicPrice) * quantity);
+
+        uint256 currentPrice = getCurrentPrice();
+        refundIfOver(uint256(currentPrice) * quantity);
     }
 
-    function setPublicSaleStatus(bool status) external onlyOwner {
-        publicSaleStatus = status;
-    }
-
-    function getCurrentPrice() external view returns (uint256 currentPrice) {
+    function getCurrentPrice() public view returns (uint256 currentPrice) {
         uint256 publicMinted = 6000 - amountForPublicSale;
 
         if (publicMinted <= 3000) {
-            currentPrice = 0.15 ether;
+            currentPrice = 0.15 ether; // todo: 这个价格以后会调整吗？
         } else if (publicMinted > 3000 && publicMinted <= 6000) {
             currentPrice = 0.2 ether;
         }

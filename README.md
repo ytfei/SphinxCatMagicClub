@@ -39,7 +39,7 @@ function allowListMintPrice() uint256;
 // 购买盲盒（普通用户购买）
 // TODO: 需要校验用户支付的价格。目前生成合约没有做这个校验。
 // @param quantity 购买盲盒的数量
-function publicSaleMint(uint256 quantity) ;
+function publicSaleMint(uint256 quantity);
 
 // 查询当前的价格（普通用户购买），这个价格是浮动的，随着已经铸造的数量变化。公开发售价格区间： 0.06 eth （1～1000），0.08 eth（1001～3000），0.1 eth（3001～6000）
 // TODO: 问题：如果允许用户购买多个，那么用户在同时购买 1000,1001 是时候，用哪个价格？
@@ -75,3 +75,7 @@ function transferOwnership(address newOwner)
 
 合约部署网络：以太坊 Goerli 测试网
 合约部署地址：0x29370809CcDF34974a9a5E547F05F6cF0EE27B01
+
+# Local Test with Ganache
+ganache -m "buzz track ticket fresh mom cigar net switch cruise response mention start" -a 100
+> 多生成一些账号用于测试
