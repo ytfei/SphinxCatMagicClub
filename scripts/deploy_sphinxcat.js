@@ -34,17 +34,6 @@ async function main() {
   await deploy()
 }
 
-async function mintNFT(owner, contract) {
-  const price = await contract.getCurrentPrice();
-
-  // mint one NFT
-  const options = { value: price };
-  const mintTx = await contract.publicSaleMint(1, options);
-  await mintTx.wait();
-
-  const balance = await contract.balanceOf(owner.address);
-  return balance.toNumber();
-}
 
 // module.exports.deploy = deploy;
 

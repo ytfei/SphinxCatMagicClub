@@ -253,4 +253,12 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
             currentPrice = 0.2 ether;
         }
     }
+
+    function contractURI() public view returns (string memory) {
+        string memory baseURI = _baseURI();
+        return
+            bytes(baseURI).length > 0
+                ? string(abi.encodePacked(baseURI, symbol()))
+                : "";
+    }
 }
