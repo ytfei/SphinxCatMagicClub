@@ -2,6 +2,8 @@ const { MerkleTree } = require('merkletreejs')
 const keccak256 = require('keccak256')
 
 let whitelistAddress = [
+    '0x2F6458727f03d3550df11DE70937AAb87D706281', // 林涛
+    '0xb2314675116832793761c7EE4f98378206Eb21B8', // 明远，developer
     '0xc83137B107145A6FC6ED35B4d044b83b8afE9C5E',
     '0x1Fc45F0135ae644aAc217Ed2e16b6E82D3a700ec',
     '0x15824D17c5FA72e6C67f227632A5BEDAfAa6BAe4',

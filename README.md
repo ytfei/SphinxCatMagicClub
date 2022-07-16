@@ -27,14 +27,15 @@ public function timeStartMintMystery() return uint256;
 // 盲盒自动打开的时间（Linux 时间戳，秒）
 public function timeUncoverNFT() return uint256;
 
+// 判断用户是否在白名单中
+// @param proof 根据用户地址计算得到的hash数组
+// @return bool 是否在白名单中
+function isInAllowList(bytes32[] memory proof) return bool;
+
 // 白名单用户购买
 // @param quantity 购买盲盒的数量
 // @param proof merkle hash 值
 function allowListMint(uint256 quantity, bytes32[] memory proof)
-
-// 白名单用户购买价格
-// @return 白名单用户购买的价格
-function allowListMintPrice() uint256;
 
 // 购买盲盒（普通用户购买）
 // TODO: 需要校验用户支付的价格。目前生成合约没有做这个校验。
@@ -44,7 +45,7 @@ function publicSaleMint(uint256 quantity);
 // 查询当前的价格（普通用户购买），这个价格是浮动的，随着已经铸造的数量变化。公开发售价格区间： 0.06 eth （1～1000），0.08 eth（1001～3000），0.1 eth（3001～6000）
 // TODO: 问题：如果允许用户购买多个，那么用户在同时购买 1000,1001 是时候，用哪个价格？
 // @return 当前的价格（注意价格单位 GWei，需要转换为 ether 显示)
-function publicPrice() uint256;
+function getCurrentPrice() uint256;
 
 // 总共铸造了多少NFT 
 // @return 已经铸造的NFT数量

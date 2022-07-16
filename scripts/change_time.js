@@ -4,6 +4,7 @@
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
 const hre = require("hardhat");
+const { connect } = require('./common.js')
 
 require("dotenv").config();
 
@@ -16,12 +17,13 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const PrimalNFT = await hre.ethers.getContractFactory("PrimalNFT");
-  const primalNFT = await PrimalNFT.attach(process.env.HERO_NFT_ADDRESS);
 
-  const name = await primalNFT.name();
+  const sphinxCat = await connect('0xa4d8B326c0ed2D65989BC2bBe283D141528e8706')
 
-  console.log("Primal NFT name:", name);
+  const TIME_START_MYSTREY = parseInt(new Date().getTime() / 1000) - 10
+  const TIME_UNCOVER_MYSTREY = TIME_START_MYSTREY + 24 * 60 * 60 * 20
+  const setTimeTx = await sphinxCat.setTime(TIME_START_MYSTREY, TIME_UNCOVER_MYSTREY);
+  await setTimeTx.wait()
 }
 
 // We recommend this pattern to be able to use async/await everywhere

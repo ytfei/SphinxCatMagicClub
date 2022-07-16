@@ -73,12 +73,15 @@ library MerkleProof {
     }
 }
 
+/**
+ * SphinxCat NFT 合约
+ */
 contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
     constructor(
         uint256 timeStartMintMystery_,
         uint256 timeUncoverNFT_,
         bytes32 merkleRoot_
-    ) ERC721A("Sphinx Cat Magic Club", "SCMC", 1, 10000) {
+    ) ERC721A("Sphinx Cat Magic Club", "SCMC", 500, 10000) {
         require(
             timeStartMintMystery_ < timeUncoverNFT_,
             "time to uncover NFT should after mint"
@@ -89,8 +92,22 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
         merkleRoot = merkleRoot_;
     }
 
-    // 团队保留的NFT（用于社区营销）
-    uint256 public reservedMintAmount = 500; // private
+    // metadata URI
+    string private _baseTokenURIMystrey =
+        "ipfs://bafybeielxy5wach4socvkzplakik67dioiuzqc56qydupuqyzsw5gj5ukm/";
+    string private _baseTokenURIReal =
+        "ipfs://bafybeielxy5wach4socvkzplakik67dioiuzqc56qydupuqyzsw5gj5ukm/";
+
+    // user can mint NFT mystery box during _timeStartMintMystery and _timeUncoverNFT
+
+    // when to mint NFT mystery box
+    uint256 public timeStartMintMystery;
+
+    // until when then NFT mystery box is uncovered automatically.
+    uint256 public timeUncoverNFT;    
+
+    // 团队保留的NFT（用于社区营销）500 + 88
+    uint256 public reservedMintAmount = 588; // private
 
     // For marketing etc.
     function reserveMint(uint256 quantity, address to) external onlyOwner {
@@ -110,20 +127,6 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
 
         reservedMintAmount -= quantity;
     }
-
-    // metadata URI
-    string private _baseTokenURIMystrey =
-        "ipfs://bafybeielxy5wach4socvkzplakik67dioiuzqc56qydupuqyzsw5gj5ukm/";
-    string private _baseTokenURIReal =
-        "ipfs://bafybeielxy5wach4socvkzplakik67dioiuzqc56qydupuqyzsw5gj5ukm/";
-
-    // user can mint NFT mystery box during _timeStartMintMystery and _timeUncoverNFT
-
-    // when to mint NFT mystery box
-    uint256 public timeStartMintMystery;
-
-    // until when then NFT mystery box is uncovered automatically.
-    uint256 public timeUncoverNFT;
 
     function _baseURI() internal view virtual override returns (string memory) {
         if (block.timestamp < timeUncoverNFT) {
@@ -174,14 +177,30 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
     }
 
     // 白名单用户的铸造价格
-    uint256 public allowListMintAmount = 3500;
-    uint256 public immutable maxPerAddressDuringMint = 1;
-    uint256 public immutable allowListPerMint = 1;
+    uint256 public allowListMintAmount = 500;
+
+    // 一个白名单用户最多可以铸造多少个NFT
+    uint256 public immutable maxPerAddressDuringMint = 5;
+
+    // 一次性可以铸造几个NFT
+    uint256 public immutable allowListPerMint = 5;
 
     bytes32 public merkleRoot;
 
     mapping(address => bool) public allowListAppeared;
     mapping(address => uint256) public allowListStock;
+
+    /**
+     * 判断用户是否在白名单中
+     */
+    function isInAllowList(bytes32[] memory proof)
+        public
+        view
+        returns (bool ret)
+    {
+        bytes32 leaf = keccak256(abi.encodePacked(msg.sender));
+        ret = MerkleProof.verify(proof, merkleRoot, leaf);
+    }
 
     // payable 白名单用户铸造不需要付费（线下交易过了）只需要出Gas就行
     function allowListMint(uint256 quantity, bytes32[] memory proof) external {
@@ -192,12 +211,15 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
             totalSupply() + quantity <= collectionSize,
             "reached max supply"
         );
+
         require(allowListMintAmount >= quantity, "reached max amount");
+
         bytes32 leaf = keccak256(abi.encodePacked(msg.sender));
         require(
             MerkleProof.verify(proof, merkleRoot, leaf),
             "Invalid Merkle Proof."
         );
+
         if (!allowListAppeared[msg.sender]) {
             allowListAppeared[msg.sender] = true;
             allowListStock[msg.sender] = maxPerAddressDuringMint;
@@ -206,6 +228,7 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
             allowListStock[msg.sender] >= quantity,
             "reached allow list per address mint amount"
         );
+
         allowListStock[msg.sender] -= quantity;
         _safeMint(msg.sender, quantity);
         allowListMintAmount -= quantity;
@@ -219,13 +242,22 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
     function isMintable() private view returns (bool) {
         return
             block.timestamp >= timeStartMintMystery &&
-            block.timestamp <= timeUncoverNFT;
+            totalSupply() < collectionSize;
     }
 
-    uint256 public amountForPublicSale = 6000;
+    // 可公开铸造的NFT总量
+    uint256 public immutable PUBLIC_SALE_AMOUNT = 8912;
+    uint256 public immutable PUBLIC_SALE_STAGE_ONE_AMOUNT = 3000; // 第一阶段销售的数量
+    uint256 public immutable PUBLIC_SALE_STAGE_TWO_AMOUNT = 6912; // 第二阶段销售的数量
+
+    uint256 private stageOnePrice = 0.15 ether; // 第一阶段销售的数量
+    uint256 private stageTwoPrice = 0.2 ether; // 第二阶段销售的数量
+
+    // 剩余可公开铸造的NFT数量
+    uint256 public amountForPublicSale = 8912;
 
     // per mint public sale limitation
-    uint256 public immutable publicSalePerMint = 1;
+    uint256 public immutable publicSalePerMint = 5;
 
     function publicSaleMint(uint256 quantity) external payable {
         require(isMintable(), "not mintable");
@@ -245,13 +277,39 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
     }
 
     function getCurrentPrice() public view returns (uint256 currentPrice) {
-        uint256 publicMinted = 6000 - amountForPublicSale;
+        uint256 publicMinted = PUBLIC_SALE_AMOUNT - amountForPublicSale;
 
-        if (publicMinted <= 3000) {
-            currentPrice = 0.15 ether; // todo: 这个价格以后会调整吗？
-        } else if (publicMinted > 3000 && publicMinted <= 6000) {
-            currentPrice = 0.2 ether;
+        if (publicMinted <= PUBLIC_SALE_STAGE_ONE_AMOUNT) {
+            currentPrice = stageOnePrice; // todo: 这个价格以后会调整吗？
+        } else if (
+            publicMinted > PUBLIC_SALE_STAGE_ONE_AMOUNT &&
+            publicMinted <= PUBLIC_SALE_STAGE_TWO_AMOUNT
+        ) {
+            currentPrice = stageTwoPrice;
         }
+
+        // 逻辑应该走不到这里，或者在这里报错
+        currentPrice = stageTwoPrice;
+    }
+
+    // 修改销售价格（应该是用不到，以防运营修改策略）
+    // For TEST
+    function setPrice(uint256 _stageOnePrice, uint256 _stageTwoPrice)
+        external
+        onlyOwner
+    {
+        stageOnePrice = _stageOnePrice;
+        stageTwoPrice = _stageTwoPrice;
+    }
+
+    // 修改盲盒开启的时间
+    // For TEST
+    function setTime(uint256 _timeStartMintMystery, uint256 _timeUncoverNFT)
+        external
+        onlyOwner
+    {
+        timeStartMintMystery = _timeStartMintMystery;
+        timeUncoverNFT = _timeUncoverNFT;
     }
 
     function contractURI() public view returns (string memory) {

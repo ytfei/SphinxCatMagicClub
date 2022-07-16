@@ -6,18 +6,22 @@
 const { ethers } = require("hardhat");
 const hre = require("hardhat");
 const utils = hre.ethers.utils;
-const { merkleTree } = require("../scripts/merkletree_util")
+const { merkleTree } = require("./old/merkletree_util")
 require("dotenv").config();
 
-const TIME_START_MYSTREY = parseInt(Date.now() / 1000) - 10
-const TIME_UNCOVER_MYSTREY = TIME_START_MYSTREY + 24 * 60 * 60 * 7
+const TIME_START_MYSTREY = parseInt(new Date(2022, 7, 26, 0, 0, 0).getTime() / 1000) - 10
+const TIME_UNCOVER_MYSTREY = TIME_START_MYSTREY + 24 * 60 * 60 * 20
 
 const BigNumber = ethers.BigNumber
 
 // deploy resources
 async function deploy() {
+  const root = merkleTree.getRoot()
+  
   const SphinxCat = await hre.ethers.getContractFactory("SphinxCat");
-  const cat = await SphinxCat.deploy(BigNumber.from(TIME_START_MYSTREY), BigNumber.from(TIME_UNCOVER_MYSTREY), merkleTree.getRoot());
+
+  console.log(`Begin to deploy begin=${TIME_START_MYSTREY} uncover=${TIME_UNCOVER_MYSTREY}, root=${root}`)
+  const cat = await SphinxCat.deploy(BigNumber.from(TIME_START_MYSTREY), BigNumber.from(TIME_UNCOVER_MYSTREY), root);
 
   await cat.deployed();
 
