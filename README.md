@@ -32,6 +32,11 @@ public function timeUncoverNFT() return uint256;
 // @return bool 是否在白名单中
 function isInAllowList(bytes32[] memory proof) return bool;
 
+// 是否可以铸造:
+// 判断是否可以铸造的条件是当前是否对外开售，并且依然有可铸造的余额
+// @return bool 
+function isMintable() return bool;
+
 // 白名单用户购买
 // @param quantity 购买盲盒的数量
 // @param proof merkle hash 值
