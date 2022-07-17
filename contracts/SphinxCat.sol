@@ -104,7 +104,7 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
     uint256 public timeStartMintMystery;
 
     // until when then NFT mystery box is uncovered automatically.
-    uint256 public timeUncoverNFT;    
+    uint256 public timeUncoverNFT;
 
     // 团队保留的NFT（用于社区营销）500 + 88
     uint256 public reservedMintAmount = 588; // private
@@ -243,6 +243,20 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
         return
             block.timestamp >= timeStartMintMystery &&
             totalSupply() < collectionSize;
+    }
+
+    function getCollectionSize() external view returns (uint256 ret) {
+        ret = collectionSize;
+    }
+
+    // 剩余可铸造的数量
+    function amountMintable() external view returns (uint256 ret) {
+        if (!allowListAppeared[msg.sender]) {
+            // 不做初始化，这里制作判断
+            ret = maxPerAddressDuringMint;
+        } else {
+            ret = allowListStock[msg.sender];
+        }
     }
 
     // 可公开铸造的NFT总量

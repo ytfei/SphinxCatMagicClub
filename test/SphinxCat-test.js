@@ -1,6 +1,6 @@
 const { expect, assert } = require("chai");
 const { ethers } = require("hardhat");
-const { merkleTree } = require("../scripts/merkletree_util")
+const { merkleTree } = require("../scripts/old/merkletree_util")
 
 
 const TIME_START_MYSTREY = parseInt(Date.now() / 1000) - 10

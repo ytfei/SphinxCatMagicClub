@@ -40,7 +40,11 @@ function isMintable() return bool;
 // 白名单用户购买
 // @param quantity 购买盲盒的数量
 // @param proof merkle hash 值
-function allowListMint(uint256 quantity, bytes32[] memory proof)
+function allowListMint(uint256 quantity, bytes32[] memory proof);
+
+// 当前用户还能铸造的NFT数量
+// @return int 五个以内
+function amountMintable() return int;
 
 // 购买盲盒（普通用户购买）
 // @param quantity 购买盲盒的数量
@@ -57,26 +61,29 @@ function totalSupply() uint256;
 
 // NFT总数量
 // @return NFT总数量
-function collectionSize() uint256;
+function getCollectionSize() uint256;
 ```
 
 ## 管理端接口
 
-```javascript
+> 前端不需要实现
 
+```javascript
 // 变更管理员
-function transferOwnership(address newOwner)
+function transferOwnership(address newOwner);
 
 // 提取合约余额
+function withdrawMoney();
 
 // 设置公开发售的阶段性价格
+function setPrice(uint256 _stageOnePrice, uint256 _stageTwoPrice);
 
 // 设置 MerkleRoot
-
+function setRoot(bytes32 root);
 
 ```
 # 联调
 
 合约部署网络：以太坊 Goerli 测试网
-合约部署地址：0x29370809CcDF34974a9a5E547F05F6cF0EE27B01
+合约部署地址：0xa4d8B326c0ed2D65989BC2bBe283D141528e8706
 
