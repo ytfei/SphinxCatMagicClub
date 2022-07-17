@@ -204,7 +204,7 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
 
     // payable 白名单用户铸造不需要付费（线下交易过了）只需要出Gas就行
     function allowListMint(uint256 quantity, bytes32[] memory proof) external {
-        require(isMintable(), "not mintable");
+        require(_isMintable(), "not mintable");
         require(quantity <= allowListPerMint, "reached max amount per mint");
 
         require(
@@ -239,11 +239,15 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
     }
 
     // 只有区块时间在指定的时间范围内，才可以铸造
-    function isMintable() private view returns (bool) {
+    function _isMintable() private view returns (bool) {
         return
             block.timestamp >= timeStartMintMystery &&
             totalSupply() < collectionSize;
     }
+
+    // function isMintable() external view returns (bool) {
+    //     return _isMintable();
+    // }
 
     function getCollectionSize() external view returns (uint256 ret) {
         ret = collectionSize;
@@ -252,7 +256,7 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
     // 剩余可铸造的数量
     function amountMintable() external view returns (uint256 ret) {
         if (!allowListAppeared[msg.sender]) {
-            // 不做初始化，这里制作判断
+            // 不做初始化，这里只做判断，返回最大铸造值
             ret = maxPerAddressDuringMint;
         } else {
             ret = allowListStock[msg.sender];
@@ -274,7 +278,7 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
     uint256 public immutable publicSalePerMint = 5;
 
     function publicSaleMint(uint256 quantity) external payable {
-        require(isMintable(), "not mintable");
+        require(_isMintable(), "not mintable");
         require(
             totalSupply() + quantity <= collectionSize,
             "reached max supply"
@@ -295,11 +299,13 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
 
         if (publicMinted <= PUBLIC_SALE_STAGE_ONE_AMOUNT) {
             currentPrice = stageOnePrice; // todo: 这个价格以后会调整吗？
+            return currentPrice;
         } else if (
             publicMinted > PUBLIC_SALE_STAGE_ONE_AMOUNT &&
             publicMinted <= PUBLIC_SALE_STAGE_TWO_AMOUNT
         ) {
             currentPrice = stageTwoPrice;
+            return currentPrice;
         }
 
         // 逻辑应该走不到这里，或者在这里报错

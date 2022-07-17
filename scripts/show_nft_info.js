@@ -3,11 +3,12 @@
 //
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
-const hre = require("hardhat");
+const {ethers} = require("hardhat");
 const { connect, log_gas_price } = require('./common.js')
 
 require("dotenv").config();
 
+// 查询NFT的所有信息
 async function main() {
   // Hardhat always runs the compile task when running scripts with its command
   // line interface.
@@ -21,17 +22,23 @@ async function main() {
   // const sphinxCat = await connect('0x705f217469A48948Da3b2C131Fb057012F2a36e0');
   const sphinxCat = await connect();
 
-  // Date日期中的month是从0开始编号的
-  const begin = new Date(2022, 6, 17, 0, 0, 0); // 有时区信息
-  const beginInSec = begin.getTime() / 1000; // 秒
-  const beginInSecUTC = beginInSec - begin.getTimezoneOffset() * 60;
+  const timeStartMintMystery = await sphinxCat.timeStartMintMystery();
+  const timeUncoverNFT = await sphinxCat.timeUncoverNFT();
+  // const isMintable = await sphinxCat.isMintable();
+  const amountMintable = await sphinxCat.amountMintable();
+  const getCurrentPrice = await sphinxCat.getCurrentPrice();
+  const totalSupply = await sphinxCat.totalSupply();
+  const getCollectionSize = await sphinxCat.getCollectionSize();
 
-  const TIME_START_MYSTREY = beginInSecUTC
-  const TIME_UNCOVER_MYSTREY = TIME_START_MYSTREY + 24 * 60 * 60 * 20
+  console.log(`
+  timeStartMintMystery: ${timeStartMintMystery}
+  timeUncoverNFT: ${timeUncoverNFT}
+  amountMintable(for current user): ${amountMintable}
+  getCurrentPrice: ${ethers.utils.formatEther(getCurrentPrice)} ether
+  totalSupply: ${totalSupply}
+  getCollectionSize: ${getCollectionSize}
+  `)
 
-  const setTimeTx = await sphinxCat.setTime(TIME_START_MYSTREY, TIME_UNCOVER_MYSTREY);
-  const setTimeTxReceipt = await setTimeTx.wait()
-  log_gas_price(setTimeTxReceipt)
 }
 
 // We recommend this pattern to be able to use async/await everywhere

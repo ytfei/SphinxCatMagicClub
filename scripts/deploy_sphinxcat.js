@@ -9,7 +9,12 @@ const utils = hre.ethers.utils;
 const { merkleTree } = require("./old/merkletree_util")
 require("dotenv").config();
 
-const TIME_START_MYSTREY = parseInt(new Date(2022, 7, 26, 0, 0, 0).getTime() / 1000) - 10
+// javascript 日期中，Month是从0开始编号的
+const begin = new Date(2022, 6, 26, 0, 0, 0); // 有时区信息
+const beginInSec = begin.getTime() / 1000; // 秒
+const beginInSecUTC = beginInSec - begin.getTimezoneOffset() * 60;
+
+const TIME_START_MYSTREY = beginInSecUTC
 const TIME_UNCOVER_MYSTREY = TIME_START_MYSTREY + 24 * 60 * 60 * 20
 
 const BigNumber = ethers.BigNumber

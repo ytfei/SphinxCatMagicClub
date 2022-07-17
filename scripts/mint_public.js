@@ -3,7 +3,8 @@
 //
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
-const hre = require("hardhat");
+const { ethers } = require("hardhat");
+const utils = hre.ethers.utils;
 const { connect, log_gas_price } = require('./common.js')
 
 require("dotenv").config();
@@ -21,17 +22,15 @@ async function main() {
   // const sphinxCat = await connect('0x705f217469A48948Da3b2C131Fb057012F2a36e0');
   const sphinxCat = await connect();
 
-  // Date日期中的month是从0开始编号的
-  const begin = new Date(2022, 6, 17, 0, 0, 0); // 有时区信息
-  const beginInSec = begin.getTime() / 1000; // 秒
-  const beginInSecUTC = beginInSec - begin.getTimezoneOffset() * 60;
+  const currentPrice = await sphinxCat.getCurrentPrice();
+  console.log(`currentPrice = ${currentPrice}, ${utils.formatEther(currentPrice)} ether`);
 
-  const TIME_START_MYSTREY = beginInSecUTC
-  const TIME_UNCOVER_MYSTREY = TIME_START_MYSTREY + 24 * 60 * 60 * 20
+  const mintNumber = ethers.BigNumber.from('5')
+  const totalPrice = currentPrice.mul(mintNumber)
+  const publicSaleMintTx = await sphinxCat.publicSaleMint(mintNumber, { value: totalPrice });
 
-  const setTimeTx = await sphinxCat.setTime(TIME_START_MYSTREY, TIME_UNCOVER_MYSTREY);
-  const setTimeTxReceipt = await setTimeTx.wait()
-  log_gas_price(setTimeTxReceipt)
+  const publicSaleMintTxReceipt = await publicSaleMintTx.wait()
+  log_gas_price(publicSaleMintTxReceipt)
 }
 
 // We recommend this pattern to be able to use async/await everywhere
