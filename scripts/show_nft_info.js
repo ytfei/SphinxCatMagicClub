@@ -3,8 +3,11 @@
 //
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
-const {ethers} = require("hardhat");
+const { ethers } = require("hardhat");
 const { connect, log_gas_price } = require('./common.js')
+
+const { merkleTree } = require('./old/merkletree_util')
+const keccak256 = require('keccak256')
 
 require("dotenv").config();
 
@@ -22,6 +25,8 @@ async function main() {
   // const sphinxCat = await connect('0x705f217469A48948Da3b2C131Fb057012F2a36e0');
   const sphinxCat = await connect();
 
+  const [owner, addr1] = await ethers.getSigners();
+
   const timeStartMintMystery = await sphinxCat.timeStartMintMystery();
   const timeUncoverNFT = await sphinxCat.timeUncoverNFT();
   // const isMintable = await sphinxCat.isMintable();
@@ -30,14 +35,50 @@ async function main() {
   const totalSupply = await sphinxCat.totalSupply();
   const getCollectionSize = await sphinxCat.getCollectionSize();
 
+  const proof = merkleTree.getHexProof(keccak256(owner.address))
+  // const proof = merkleTree.getHexProof(keccak256('0x2F6458727f03d3550df11DE70937AAb87D706281'))
+  console.log(`proof: ${proof}`)
+
+  const isInAllowList = await sphinxCat.isInAllowList(proof)
+
+  const reservedMintAmount = await sphinxCat.reservedMintAmount()
+  const amountForPublicSale = await sphinxCat.amountForPublicSale()
+
+  const name = await sphinxCat.name()
+  const symbol = await sphinxCat.symbol()
+
   console.log(`
-  timeStartMintMystery: ${timeStartMintMystery}
-  timeUncoverNFT: ${timeUncoverNFT}
-  amountMintable(for current user): ${amountMintable}
-  getCurrentPrice: ${ethers.utils.formatEther(getCurrentPrice)} ether
+  == NFT ${name} (${symbol})
+  timeStartMintMystery: ${new Date(timeStartMintMystery * 1000)}
+  timeUncoverNFT: ${new Date(timeUncoverNFT * 1000)}
   totalSupply: ${totalSupply}
   getCollectionSize: ${getCollectionSize}
+
+  == reserved
+  reservedMintAmount: ${reservedMintAmount}
+
+  == allow list
+  isInAllowList: ${isInAllowList}
+  amountMintable(for current user[allow list]): ${amountMintable}
+
+  == public sale
+  amountForPublicSale: ${amountForPublicSale}
+  getCurrentPrice: ${ethers.utils.formatEther(getCurrentPrice)} ether
   `)
+
+  const numberMinted = await sphinxCat.numberMinted(owner.address);
+  if (numberMinted > 0) {
+    console.log(`There are ${numberMinted} NFT for user ${owner.address}: `)
+
+    for (let i = 0; i < numberMinted; i++) {
+      const tokenId = await sphinxCat.tokenOfOwnerByIndex(owner.address, i);
+      const tokenURI = await sphinxCat.tokenURI(tokenId)
+
+      console.log(`- ${symbol} #${tokenId}, ${tokenURI}`)
+    }
+  } else {
+    console.log(`No NFT available for user ${owner.address}`)
+  }
 
 }
 
