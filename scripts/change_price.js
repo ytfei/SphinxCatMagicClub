@@ -4,10 +4,7 @@
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
 const { ethers } = require("hardhat");
-const utils = hre.ethers.utils;
 const { connect, log_gas_price } = require('./common.js')
-const { merkleTree } = require('./old/merkletree_util')
-const keccak256 = require('keccak256')
 
 require("dotenv").config();
 
@@ -24,29 +21,12 @@ async function main() {
   // const sphinxCat = await connect('0x705f217469A48948Da3b2C131Fb057012F2a36e0');
   const sphinxCat = await connect();
 
-  const [owner, addr1] = await ethers.getSigners();
+  const stageOnePrice = ethers.utils.parseEther('0.00015')
+  const stageTwoPrice = ethers.utils.parseEther('0.0002')
 
-  const proof = merkleTree.getHexProof(keccak256(owner.address))
-
-  console.log(`owner: ${owner.address}， proof: ${proof}`);
-
-  const isInAllowList = await sphinxCat.isInAllowList(proof);
-  console.log(`user ${owner.address} is in allow list ${isInAllowList}`)
-
-  if (isInAllowList) {
-    const mintNumber = ethers.BigNumber.from('2')
-
-    const allowListMintTx = await sphinxCat.allowListMint(mintNumber, proof);
-    const allowListMintTxReceipt = await allowListMintTx.wait();
-
-    log_gas_price(allowListMintTxReceipt);
-
-    const rest = await sphinxCat.amountMintable();
-    console.log(`The rest for current user ${owner.address} to mint is ${rest}`);
-  }
-
-  // const reserveMintTxReceipt = await reserveMintTx.wait()
-  // log_gas_price(reserveMintTxReceipt)
+  const setPriceTx = await sphinxCat.setPrice(stageOnePrice, stageTwoPrice);
+  const setPriceTxReceipt = await setPriceTx.wait()
+  log_gas_price(setPriceTxReceipt)
 }
 
 // We recommend this pattern to be able to use async/await everywhere

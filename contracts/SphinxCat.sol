@@ -94,7 +94,7 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
 
     // metadata URI
     string private _baseTokenURIMystrey =
-        "https://bafybeidplsjc34p3wg3fbwvh4oq5r7ifm346geyo3en5sfbiokeryebq6e.ipfs.nftstorage.link/";
+        "https://bafybeiek5ivq4gqz42ujys2ullxtkac6rjkat5lrs4ofhvx55bm6ptc7fa.ipfs.nftstorage.link/";
     string private _baseTokenURIReal =
         "https://bafybeidplsjc34p3wg3fbwvh4oq5r7ifm346geyo3en5sfbiokeryebq6e.ipfs.nftstorage.link/";
 
@@ -161,13 +161,13 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
         return _numberMinted(owner);
     }
 
-    function getOwnershipData(uint256 tokenId)
-        external
-        view
-        returns (TokenOwnership memory)
-    {
-        return ownershipOf(tokenId);
-    }
+    // function getOwnershipData(uint256 tokenId)
+    //     external
+    //     view
+    //     returns (TokenOwnership memory)
+    // {
+    //     return ownershipOf(tokenId);
+    // }
 
     function refundIfOver(uint256 price) private {
         require(msg.value >= price, "Need to send more ETH.");
@@ -180,10 +180,10 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
     uint256 public allowListMintAmount = 500;
 
     // 一个白名单用户最多可以铸造多少个NFT
-    uint256 public immutable maxPerAddressDuringMint = 5;
+    uint256 private immutable maxPerAddressDuringMint = 5;
 
     // 一次性可以铸造几个NFT
-    uint256 public immutable allowListPerMint = 5;
+    uint256 private immutable allowListPerMint = 5;
 
     bytes32 public merkleRoot;
 
@@ -265,8 +265,8 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
 
     // 可公开铸造的NFT总量
     uint256 public immutable PUBLIC_SALE_AMOUNT = 8912;
-    uint256 public immutable PUBLIC_SALE_STAGE_ONE_AMOUNT = 3000; // 第一阶段销售的数量
-    uint256 public immutable PUBLIC_SALE_STAGE_TWO_AMOUNT = 6912; // 第二阶段销售的数量
+    uint256 private immutable PUBLIC_SALE_STAGE_ONE_AMOUNT = 3000; // 第一阶段销售的数量
+    uint256 private immutable PUBLIC_SALE_STAGE_TWO_AMOUNT = 6912; // 第二阶段销售的数量
 
     uint256 private stageOnePrice = 0.15 ether; // 第一阶段销售的数量
     uint256 private stageTwoPrice = 0.2 ether; // 第二阶段销售的数量
@@ -275,7 +275,7 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
     uint256 public amountForPublicSale = 8912;
 
     // per mint public sale limitation
-    uint256 public immutable publicSalePerMint = 5;
+    uint256 private immutable publicSalePerMint = 5;
 
     function publicSaleMint(uint256 quantity) external payable {
         require(_isMintable(), "not mintable");
@@ -286,6 +286,17 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
         require(amountForPublicSale >= quantity, "reached max amount");
 
         require(quantity <= publicSalePerMint, "reached max amount per mint");
+
+        if (!allowListAppeared[msg.sender]) {
+            allowListAppeared[msg.sender] = true;
+            allowListStock[msg.sender] = maxPerAddressDuringMint;
+        }
+        require(
+            allowListStock[msg.sender] >= quantity,
+            "reached allow list per address mint amount"
+        );
+
+        allowListStock[msg.sender] -= quantity;
 
         _safeMint(msg.sender, quantity);
         amountForPublicSale -= quantity;

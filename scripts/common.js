@@ -4,7 +4,7 @@ const utils = hre.ethers.utils;
 const { merkleTree } = require("./old/merkletree_util")
 require("dotenv").config();
 
-const DEFAULT_CONTRACT_ADDRESS = "0xCB681246CC78986881bee60F764161931d91948E" // ganache
+const DEFAULT_CONTRACT_ADDRESS = "0x45551c3668cAB1eD2CD82951ebCf53b195206CB6" // ganache
 // const DEFAULT_CONTRACT_ADDRESS = "0xBbc7d5cFE25827e4893aB792280c6Ee367cF1732" // goerli
 
 async function connect(contractAddress) {
@@ -22,7 +22,7 @@ async function connect(contractAddress) {
 }
 
 function log_gas_price(receipt) {
-    console.log(receipt)
+    // console.log(receipt)
 
     const used = receipt.gasUsed
     const price = receipt.effectiveGasPrice

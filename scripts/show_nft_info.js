@@ -39,10 +39,14 @@ async function main() {
   // const proof = merkleTree.getHexProof(keccak256('0x2F6458727f03d3550df11DE70937AAb87D706281'))
   console.log(`proof: ${proof}`)
 
-  const isInAllowList = await sphinxCat.isInAllowList(proof)
+  const isInAllowList = await sphinxCat.isInAllowList(proof) // 用户是否在白名单中
 
-  const reservedMintAmount = await sphinxCat.reservedMintAmount()
-  const amountForPublicSale = await sphinxCat.amountForPublicSale()
+  const reservedMintAmount = await sphinxCat.reservedMintAmount() // 保留的NFT数量（用于社区活动），只能由管理员铸造
+  
+  const PUBLIC_SALE_AMOUNT = await sphinxCat.PUBLIC_SALE_AMOUNT() // 公开销售的总额（固定值）
+  const amountForPublicSale = await sphinxCat.amountForPublicSale() // 公开销售的数量（余额）
+
+  const allowListMintAmount = await sphinxCat.allowListMintAmount() // 白名单销售数量（余额）
 
   const name = await sphinxCat.name()
   const symbol = await sphinxCat.symbol()
@@ -60,9 +64,10 @@ async function main() {
   == allow list
   isInAllowList: ${isInAllowList}
   amountMintable(for current user[allow list]): ${amountMintable}
-
+  allowListMintAmount: ${allowListMintAmount}
+  
   == public sale
-  amountForPublicSale: ${amountForPublicSale}
+  amountForPublicSale: ${amountForPublicSale}/${PUBLIC_SALE_AMOUNT}
   getCurrentPrice: ${ethers.utils.formatEther(getCurrentPrice)} ether
   `)
 
