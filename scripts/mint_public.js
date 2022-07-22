@@ -25,7 +25,7 @@ async function main() {
   const currentPrice = await sphinxCat.getCurrentPrice();
   console.log(`currentPrice = ${currentPrice}, ${utils.formatEther(currentPrice)} ether`);
 
-  const mintNumber = ethers.BigNumber.from('5')
+  const mintNumber = ethers.BigNumber.from('1')
   const totalPrice = currentPrice.mul(mintNumber)
   const publicSaleMintTx = await sphinxCat.publicSaleMint(mintNumber, { value: totalPrice });
 

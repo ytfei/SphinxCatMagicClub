@@ -26,7 +26,7 @@ async function main() {
 
   console.log(`owner: ${owner.address}`);
 
-  const mintNumber = ethers.BigNumber.from('5')
+  const mintNumber = ethers.BigNumber.from('2')
   const reserveMintTx = await sphinxCat.reserveMint(mintNumber, owner.address);
 
   const reserveMintTxReceipt = await reserveMintTx.wait()

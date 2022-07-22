@@ -4,8 +4,9 @@ const utils = hre.ethers.utils;
 const { merkleTree } = require("./old/merkletree_util")
 require("dotenv").config();
 
-const DEFAULT_CONTRACT_ADDRESS = "0x45551c3668cAB1eD2CD82951ebCf53b195206CB6" // ganache
-// const DEFAULT_CONTRACT_ADDRESS = "0xBbc7d5cFE25827e4893aB792280c6Ee367cF1732" // goerli
+// const DEFAULT_CONTRACT_ADDRESS = "0x550490411d752810a82Be3D437aa7D59E5B36456" // ganache
+const DEFAULT_CONTRACT_ADDRESS = "0xcf301544b10b41E62f986CA88157c9533d7E9487" // mumbai
+// const DEFAULT_CONTRACT_ADDRESS = "0x5122D08F01400C8370228B6aF5e7E2E77f36Cecc" // goerli
 
 async function connect(contractAddress) {
     const SphinxCat = await hre.ethers.getContractFactory("SphinxCat");

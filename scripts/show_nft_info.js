@@ -22,7 +22,6 @@ async function main() {
 
   // We get the contract to deploy
 
-  // const sphinxCat = await connect('0x705f217469A48948Da3b2C131Fb057012F2a36e0');
   const sphinxCat = await connect();
 
   const [owner, addr1] = await ethers.getSigners();

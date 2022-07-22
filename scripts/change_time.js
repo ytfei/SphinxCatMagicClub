@@ -22,12 +22,12 @@ async function main() {
   const sphinxCat = await connect();
 
   // Date日期中的month是从0开始编号的
-  const begin = new Date(2022, 6, 17, 0, 0, 0); // 有时区信息
+  const begin = new Date(2022, 6, 20, 7, 0, 0); // 有时区信息
   const beginInSec = begin.getTime() / 1000; // 秒
   const beginInSecUTC = beginInSec - begin.getTimezoneOffset() * 60;
 
   const TIME_START_MYSTREY = beginInSecUTC
-  const TIME_UNCOVER_MYSTREY = TIME_START_MYSTREY + 24 * 60 * 60 * 20
+  const TIME_UNCOVER_MYSTREY = TIME_START_MYSTREY + 6 * 60 * 60 * 1
 
   const setTimeTx = await sphinxCat.setTime(TIME_START_MYSTREY, TIME_UNCOVER_MYSTREY);
   const setTimeTxReceipt = await setTimeTx.wait()

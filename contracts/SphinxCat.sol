@@ -96,7 +96,7 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
     string private _baseTokenURIMystrey =
         "https://bafybeiek5ivq4gqz42ujys2ullxtkac6rjkat5lrs4ofhvx55bm6ptc7fa.ipfs.nftstorage.link/";
     string private _baseTokenURIReal =
-        "https://bafybeidplsjc34p3wg3fbwvh4oq5r7ifm346geyo3en5sfbiokeryebq6e.ipfs.nftstorage.link/";
+        "https://bafybeicuhxmzforbbyzr362ebifzdriuyip47pnjh3dmi5sn67k6q2batu.ipfs.nftstorage.link/";
 
     // user can mint NFT mystery box during _timeStartMintMystery and _timeUncoverNFT
 
@@ -187,6 +187,7 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
 
     bytes32 public merkleRoot;
 
+    // 不仅白名单，对所有的用户都采用同样的限制（每个用户只能铸造五个）
     mapping(address => bool) public allowListAppeared;
     mapping(address => uint256) public allowListStock;
 
