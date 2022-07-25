@@ -1,16 +1,5 @@
 // SPDX-License-Identifier: MIT
 
-/**
-                               _
-     /\                       | |
-    /  \   _ __ ___   __ _  __| | ___ _   _ ___
-   / /\ \ | '_ ` _ \ / _` |/ _` |/ _ | | | / __|
-  / ____ \| | | | | | (_| | (_| |  __| |_| \__ \
- /_/    \_|_| |_| |_|\__,_|\__,_|\___|\__,_|___/
-
- @developer:CivilLabs_Amadeus
-*/
-
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -81,7 +70,7 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
         uint256 timeStartMintMystery_,
         uint256 timeUncoverNFT_,
         bytes32 merkleRoot_
-    ) ERC721A("Sphinx Cat Magic Club", "SCMC", 500, 10000) {
+    ) ERC721A("Sphynx Cat Magic Club", "SCMC", 500, 10000) {
         require(
             timeStartMintMystery_ < timeUncoverNFT_,
             "time to uncover NFT should after mint"
@@ -96,7 +85,7 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
     string private _baseTokenURIMystrey =
         "https://bafybeiek5ivq4gqz42ujys2ullxtkac6rjkat5lrs4ofhvx55bm6ptc7fa.ipfs.nftstorage.link/";
     string private _baseTokenURIReal =
-        "https://bafybeicuhxmzforbbyzr362ebifzdriuyip47pnjh3dmi5sn67k6q2batu.ipfs.nftstorage.link/";
+        "https://scmc.io/";
 
     // user can mint NFT mystery box during _timeStartMintMystery and _timeUncoverNFT
 

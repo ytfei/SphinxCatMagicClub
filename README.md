@@ -1,17 +1,23 @@
-# Hardhat Project
+# 目录结构 
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.
+- contracts: 合约
+- scripts: 工具脚本，用于执行合约操作
+  -  deploy_sphinxcat.js 部署
+  - change_time.js 变更合约预售、盲盒开启的时间
+  - change_uri.js 变更合约中属性文件地址（文件部署在IPFS上）
+  - change_price.js 变更合约中的NFT销售价格
+  - mint_public.js 公开铸造，需要支付费用
+  - mint_reserve.js 铸造保留NFT（只有owner可以铸造，铸造的NFT直接发放至指定的地址中）
+  - mint_allowlist.js 白名单铸造（如果当前钱包地址在白名单中，才可以铸造）
+  - show_nft_info.js 展示当前合约的状态信息
+  
 
-Try running some of the following tasks:
+```bash
+# 部署合约至Goerli，执行后的输出结果中会有合约地址
+npx hardhat run --network goerli scripts/deploy_sphinxcat.js 
 
-```shell
-npx hardhat accounts
-npx hardhat compile
-npx hardhat clean
-npx hardhat test
-npx hardhat node
-node scripts/sample-script.js
-npx hardhat help
+# 将合约地址更新至 scripts/common.js 中
+
 ```
 
 # API

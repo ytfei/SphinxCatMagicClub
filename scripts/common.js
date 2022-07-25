@@ -4,8 +4,8 @@ const utils = hre.ethers.utils;
 const { merkleTree } = require("./old/merkletree_util")
 require("dotenv").config();
 
-// const DEFAULT_CONTRACT_ADDRESS = "0x550490411d752810a82Be3D437aa7D59E5B36456" // ganache
-const DEFAULT_CONTRACT_ADDRESS = "0xcf301544b10b41E62f986CA88157c9533d7E9487" // mumbai
+const DEFAULT_CONTRACT_ADDRESS = "0x57Aa9c2B0D14FaD7901F1aDF35D7fb50C69a7deb" // ganache
+// const DEFAULT_CONTRACT_ADDRESS = "0xcf301544b10b41E62f986CA88157c9533d7E9487" // mumbai
 // const DEFAULT_CONTRACT_ADDRESS = "0x5122D08F01400C8370228B6aF5e7E2E77f36Cecc" // goerli
 
 async function connect(contractAddress) {

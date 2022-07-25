@@ -21,17 +21,12 @@ async function main() {
   // const sphinxCat = await connect('0x705f217469A48948Da3b2C131Fb057012F2a36e0');
   const sphinxCat = await connect();
 
-  // Date日期中的month是从0开始编号的
-  const begin = new Date(2022, 6, 22, 10, 0, 0); // 有时区信息
-  const beginInSec = begin.getTime() / 1000; // 秒
-  const beginInSecUTC = beginInSec - begin.getTimezoneOffset() * 60;
+  const mythtoryUri = 'https://abc.com/';
+  const nftUri = 'https://def.com/';
 
-  const TIME_START_MYSTREY = beginInSecUTC
-  const TIME_UNCOVER_MYSTREY = TIME_START_MYSTREY + 2 * 60 * 60 * 1
-
-  const setTimeTx = await sphinxCat.setTime(TIME_START_MYSTREY, TIME_UNCOVER_MYSTREY);
-  const setTimeTxReceipt = await setTimeTx.wait()
-  log_gas_price(setTimeTxReceipt)
+  const setBaseURITx = await sphinxCat.setBaseURI(mythtoryUri, nftUri);
+  const setBaseURITxReceipt = await setBaseURITx.wait()
+  log_gas_price(setBaseURITxReceipt)
 }
 
 // We recommend this pattern to be able to use async/await everywhere
