@@ -99,7 +99,7 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
     uint256 public reservedMintAmount = 588; // private
 
     // For marketing etc.
-    function reserveMint(uint256 quantity, address to) external onlyOwner {
+    function reserveMint(uint256 quantity, address to) external onlyOwner nonReentrant {
         require(
             totalSupply() + quantity <= collectionSize,
             "too many already minted before dev mint"
@@ -193,7 +193,7 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
     }
 
     // payable 白名单用户铸造不需要付费（线下交易过了）只需要出Gas就行
-    function allowListMint(uint256 quantity, bytes32[] memory proof) external {
+    function allowListMint(uint256 quantity, bytes32[] memory proof) external nonReentrant {
         require(_isMintable(), "not mintable");
         require(quantity <= allowListPerMint, "reached max amount per mint");
 
@@ -256,7 +256,7 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
     // 可公开铸造的NFT总量
     uint256 public immutable PUBLIC_SALE_AMOUNT = 8912;
     uint256 private immutable PUBLIC_SALE_STAGE_ONE_AMOUNT = 3000; // 第一阶段销售的数量
-    uint256 private immutable PUBLIC_SALE_STAGE_TWO_AMOUNT = 6912; // 第二阶段销售的数量
+    // uint256 private immutable PUBLIC_SALE_STAGE_TWO_AMOUNT = 5912; // 第二阶段销售的数量
 
     uint256 private stageOnePrice = 0.15 ether; // 第一阶段销售的数量
     uint256 private stageTwoPrice = 0.2 ether; // 第二阶段销售的数量
@@ -267,7 +267,7 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
     // per mint public sale limitation
     uint256 private immutable publicSalePerMint = 5;
 
-    function publicSaleMint(uint256 quantity) external payable {
+    function publicSaleMint(uint256 quantity) external payable nonReentrant {
         require(_isMintable(), "not mintable");
         require(
             totalSupply() + quantity <= collectionSize,
@@ -303,7 +303,7 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
             return currentPrice;
         } else if (
             publicMinted > PUBLIC_SALE_STAGE_ONE_AMOUNT &&
-            publicMinted <= PUBLIC_SALE_STAGE_TWO_AMOUNT
+            publicMinted <= PUBLIC_SALE_AMOUNT
         ) {
             currentPrice = stageTwoPrice;
             return currentPrice;
