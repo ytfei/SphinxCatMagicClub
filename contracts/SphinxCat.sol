@@ -83,7 +83,7 @@ contract SphinxCat is Ownable, ERC721A, ReentrancyGuard {
 
     // metadata URI
     string private _baseTokenURIMystrey =
-        "https://bafybeiek5ivq4gqz42ujys2ullxtkac6rjkat5lrs4ofhvx55bm6ptc7fa.ipfs.nftstorage.link/";
+        "https://bafybeihivvm2r3be7pwepf4w7j4mqucjix5chapx4potwnada34kxdwgqq.ipfs.nftstorage.link/";
     string private _baseTokenURIReal =
         "https://scmc.io/";
 
