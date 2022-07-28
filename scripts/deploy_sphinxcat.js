@@ -13,7 +13,7 @@ require("dotenv").config();
 
 // javascript 日期中，Month是从0开始编号的
 // 北京时间 utc +8  ，2022/7/26  22:00
-const begin = new Date(2022, 6, 30, 22, 0, 0); // 有时区信息
+const begin = new Date(2022, 7, 12, 17, 0, 0); // 有时区信息
 const beginInSec = begin.getTime() / 1000; // 秒
 const beginInSecUTC = beginInSec - begin.getTimezoneOffset() * 60;
 
